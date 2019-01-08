@@ -11,19 +11,20 @@ oc ex config patch master-config.yaml.prepatch -p 'admissionConfig:
   pluginConfig:
     MutatingAdmissionWebhook:
       configuration:
-        apiVersion: v1
-        disable: false
-        kind: DefaultAdmissionConfig
+        apiVersion: apiserver.config.k8s.io/v1alpha1
+        kubeConfigFile: /dev/null
+        kind: WebhookAdmission
     ValidatingAdmissionWebhook:
       configuration:
-        apiVersion: v1
-        disable: false
-        kind: DefaultAdmissionConfig' > master-config.yaml
+        apiVersion: apiserver.config.k8s.io/v1alpha1
+        kubeConfigFile: /dev/null
+        kind: WebhookAdmission' > master-config.yaml
 master-restart api
 master-restart controllers
 
 # add operator project & install
 oc new-project istio-operator
+sleep 5
 curl https://raw.githubusercontent.com/Maistra/openshift-ansible/maistra-0.5/istio/istio_product_operator_template.yaml |oc process -f- --param=OPENSHIFT_ISTIO_MASTER_PUBLIC_URL=https://console.192.168.178.130.nip.io:8443 --param=OPENSHIFT_ISTIO_PREFIX=registry.access.redhat.com/openshift-istio-tech-preview/ --param=OPENSHIFT_RELEASE=v3.11.0 | oc create -f- -n istio-operator
 
 # add demo project
