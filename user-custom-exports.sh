@@ -1,8 +1,9 @@
 #!/bin/bash
 
-export DOMAIN="" 
-export USERNAME="" 
-export PASSWORD="" 
+export DOMAIN="192.168.178.130.nip.io"
+export USERNAME="user"
+export PASSWORD="user"
 export SCRIPT_REPO=""
-export IP="" 
-export DISK="" 
+export VERSION="3.11"
+export IP="192.168.178.130"
+export DISK=""

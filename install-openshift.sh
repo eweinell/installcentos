@@ -2,6 +2,8 @@
 
 ## see: https://youtu.be/aqXSbDZggK4
 
+. ./user-custom-exports.sh
+
 ## Default variables to use
 export INTERACTIVE=${INTERACTIVE:="true"}
 export PVS=${INTERACTIVE:="true"}
@@ -123,7 +125,7 @@ if [ ! -f ~/.ssh/id_rsa ]; then
 fi
 
 export METRICS="True"
-export LOGGING="True"
+export LOGGING="False"
 
 memory=$(cat /proc/meminfo | grep MemTotal | sed "s/MemTotal:[ ]*\([0-9]*\) kB/\1/")
 
@@ -135,7 +137,7 @@ if [ "$memory" -lt "16777216" ]; then
 	export LOGGING="False"
 fi
 
-curl -o inventory.download $SCRIPT_REPO/inventory.ini
+#curl -o inventory.download $SCRIPT_REPO/inventory.ini
 envsubst < inventory.download > inventory.ini
 
 # add proxy in inventory.ini if proxy variables are set
