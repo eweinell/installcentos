@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # system cfg
-sysctl vm.max_map_count=262144
-echo 'vm.max_map_count=262144' > /etc/sysctl.d/99-elasticsearch.conf
+if [ ! -e /etc/sysctl.d/99-elasticsearch.conf ]; then
+	sysctl vm.max_map_count=262144
+	echo 'vm.max_map_count=262144' > /etc/sysctl.d/99-elasticsearch.conf
+fi
 
 # enable operator hooks
 cd /etc/origin/master/

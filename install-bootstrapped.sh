@@ -74,3 +74,4 @@ fi
 
 export INTERACTIVE=false
 ./install-openshift.sh
+

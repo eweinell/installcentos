@@ -2,8 +2,6 @@
 
 ## see: https://youtu.be/aqXSbDZggK4
 
-. ./user-custom-exports.sh
-
 ## Default variables to use
 export INTERACTIVE=${INTERACTIVE:="true"}
 export PVS=${INTERACTIVE:="true"}
