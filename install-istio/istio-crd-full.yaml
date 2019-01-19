@@ -17,12 +17,12 @@ spec:
   kiali:
     username: username
     password: password
-    prefix: registry.access.redhat.com/kiali/
-    version: v0.11.0
+    prefix: registry.access.redhat.com/openshift-istio-tech-preview/
+    version: 0.11.0
   launcher:
     openshift:
       user: user
-      password: password
+      password: user
     github:
       username: username
       token: token
