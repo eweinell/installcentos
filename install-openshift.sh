@@ -154,8 +154,8 @@ fi
 mkdir -p /etc/origin/master/
 touch /etc/origin/master/htpasswd
 
-ansible-playbook -i inventory.ini openshift-ansible/playbooks/prerequisites.yml
-ansible-playbook -i inventory.ini openshift-ansible/playbooks/deploy_cluster.yml
+ansible-playbook -i inventory.ini openshift-ansible/playbooks/prerequisites.yml  || exit 1
+ansible-playbook -i inventory.ini openshift-ansible/playbooks/deploy_cluster.yml || exit 1
 
 htpasswd -b /etc/origin/master/htpasswd ${USERNAME} ${PASSWORD}
 oc adm policy add-cluster-role-to-user cluster-admin ${USERNAME}
