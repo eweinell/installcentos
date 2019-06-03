@@ -1,0 +1,297 @@
+apiVersion: v1
+items:
+- apiVersion: networking.istio.io/v1alpha3
+  kind: Gateway
+  metadata:
+    name: bookinfo-gateway
+
+  spec:
+    selector:
+      istio: ingressgateway
+    servers:
+    - hosts:
+      - '*'
+      port:
+        name: http
+        number: 80
+        protocol: HTTP
+- apiVersion: networking.istio.io/v1alpha3
+  kind: VirtualService
+  metadata:
+    name: bookinfo
+  spec:
+    gateways:
+    - bookinfo-gateway
+    hosts:
+    - '*'
+    http:
+    - match:
+      - uri:
+          exact: /productpage
+      - uri:
+          exact: /login
+      - uri:
+          exact: /logout
+      - uri:
+          prefix: /api/v1/products
+      route:
+      - destination:
+          host: productpage
+          port:
+            number: 9080
+- apiVersion: networking.istio.io/v1alpha3
+  kind: VirtualService
+  metadata:
+  spec:
+    hosts:
+    - details
+    http:
+    - route:
+      - destination:
+          host: details
+          subset: v1
+- apiVersion: networking.istio.io/v1alpha3
+  kind: VirtualService
+  metadata:
+  spec:
+    hosts:
+    - productpage
+    http:
+    - route:
+      - destination:
+          host: productpage
+          subset: v1
+- apiVersion: networking.istio.io/v1alpha3
+  kind: VirtualService
+  metadata:
+    name: ratings
+  spec:
+    hosts:
+    - ratings
+    http:
+    - fault:
+        delay:
+          fixedDelay: 10s
+          percent: 30
+      route:
+      - destination:
+          host: ratings
+          subset: v1
+- apiVersion: networking.istio.io/v1alpha3
+  kind: VirtualService
+  metadata:
+  spec:
+    hosts:
+    - reviews
+    http:
+    - route:
+      - destination:
+          host: reviews
+          subset: v1
+        weight: 80
+      - destination:
+          host: reviews
+          subset: v2
+        weight: 10
+      - destination:
+          host: reviews
+          subset: v3
+        weight: 10
+- apiVersion: networking.istio.io/v1alpha3
+  kind: DestinationRule
+  metadata:
+    labels:
+      app: istio-security
+      chart: security-1.0.5
+      heritage: Tiller
+      maistra-version: 0.6.0
+      release: istio-1.0.5
+    name: api-server
+  spec:
+    host: kubernetes.default.svc.cluster.local
+    trafficPolicy:
+      tls:
+        mode: DISABLE
+- apiVersion: networking.istio.io/v1alpha3
+  kind: DestinationRule
+  metadata:
+    labels:
+      app: istio-security
+      chart: security-1.0.5
+      heritage: Tiller
+      maistra-version: 0.6.0
+      release: istio-1.0.5
+    name: default
+  spec:
+    host: '*.local'
+    trafficPolicy:
+      tls:
+        mode: ISTIO_MUTUAL
+- apiVersion: networking.istio.io/v1alpha3
+  kind: DestinationRule
+  metadata:
+    name: disable-mtls-jaeger-collector
+  spec:
+    host: jaeger-collector
+    trafficPolicy:
+      tls:
+        mode: DISABLE
+- apiVersion: networking.istio.io/v1alpha3
+  kind: DestinationRule
+  metadata:
+    creationTimestamp: 2019-01-19T21:02:40Z
+    generation: 1
+    name: disable-mtls-zipkin
+    namespace: istio-system
+    resourceVersion: "43097"
+    selfLink: /apis/networking.istio.io/v1alpha3/namespaces/istio-system/destinationrules/disable-mtls-zipkin
+    uid: 8ec33ce3-1c2d-11e9-8e7e-000c2955ae79
+  spec:
+    host: zipkin
+    trafficPolicy:
+      tls:
+        mode: DISABLE
+- apiVersion: networking.istio.io/v1alpha3
+  kind: DestinationRule
+  metadata:
+    creationTimestamp: 2019-01-19T21:01:38Z
+    generation: 1
+    name: istio-policy
+    namespace: istio-system
+    resourceVersion: "42580"
+    selfLink: /apis/networking.istio.io/v1alpha3/namespaces/istio-system/destinationrules/istio-policy
+    uid: 699d0ec7-1c2d-11e9-8e7e-000c2955ae79
+  spec:
+    host: istio-policy.istio-system.svc.cluster.local
+    trafficPolicy:
+      connectionPool:
+        http:
+          http2MaxRequests: 10000
+          maxRequestsPerConnection: 10000
+      portLevelSettings:
+      - port:
+          number: 15004
+        tls:
+          mode: ISTIO_MUTUAL
+- apiVersion: networking.istio.io/v1alpha3
+  kind: DestinationRule
+  metadata:
+    creationTimestamp: 2019-01-19T21:01:38Z
+    generation: 1
+    name: istio-telemetry
+    namespace: istio-system
+    resourceVersion: "42581"
+    selfLink: /apis/networking.istio.io/v1alpha3/namespaces/istio-system/destinationrules/istio-telemetry
+    uid: 699deb58-1c2d-11e9-8e7e-000c2955ae79
+  spec:
+    host: istio-telemetry.istio-system.svc.cluster.local
+    trafficPolicy:
+      connectionPool:
+        http:
+          http2MaxRequests: 10000
+          maxRequestsPerConnection: 10000
+      portLevelSettings:
+      - port:
+          number: 15004
+        tls:
+          mode: ISTIO_MUTUAL
+- apiVersion: networking.istio.io/v1alpha3
+  kind: DestinationRule
+  metadata:
+    creationTimestamp: 2019-01-19T23:16:39Z
+    generation: 1
+    name: details
+    namespace: myproject
+    resourceVersion: "61004"
+    selfLink: /apis/networking.istio.io/v1alpha3/namespaces/myproject/destinationrules/details
+    uid: 4680fe9f-1c40-11e9-8e7f-000c2955ae79
+  spec:
+    host: details
+    subsets:
+    - labels:
+        version: v1
+      name: v1
+    - labels:
+        version: v2
+      name: v2
+    trafficPolicy:
+      tls:
+        mode: ISTIO_MUTUAL
+- apiVersion: networking.istio.io/v1alpha3
+  kind: DestinationRule
+  metadata:
+    creationTimestamp: 2019-01-19T23:16:39Z
+    generation: 1
+    name: productpage
+    namespace: myproject
+    resourceVersion: "61001"
+    selfLink: /apis/networking.istio.io/v1alpha3/namespaces/myproject/destinationrules/productpage
+    uid: 467afaa3-1c40-11e9-8e7f-000c2955ae79
+  spec:
+    host: productpage
+    subsets:
+    - labels:
+        version: v1
+      name: v1
+    trafficPolicy:
+      tls:
+        mode: ISTIO_MUTUAL
+- apiVersion: networking.istio.io/v1alpha3
+  kind: DestinationRule
+  metadata:
+    creationTimestamp: 2019-01-19T23:16:39Z
+    generation: 1
+    name: ratings
+    namespace: myproject
+    resourceVersion: "69595"
+    selfLink: /apis/networking.istio.io/v1alpha3/namespaces/myproject/destinationrules/ratings
+    uid: 467fb649-1c40-11e9-8e7f-000c2955ae79
+  spec:
+    host: ratings
+    subsets:
+    - labels:
+        version: v1
+      name: v1
+    trafficPolicy:
+      connectionPool:
+        http:
+          http1MaxPendingRequests: 1
+          maxRequestsPerConnection: 1
+        tcp:
+          maxConnections: 1
+      outlierDetection:
+        baseEjectionTime: 3m
+        consecutiveErrors: 1
+        interval: 1s
+        maxEjectionPercent: 100
+      tls:
+        mode: ISTIO_MUTUAL
+- apiVersion: networking.istio.io/v1alpha3
+  kind: DestinationRule
+  metadata:
+    creationTimestamp: 2019-01-19T23:16:39Z
+    generation: 1
+    name: reviews
+    namespace: myproject
+    resourceVersion: "61002"
+    selfLink: /apis/networking.istio.io/v1alpha3/namespaces/myproject/destinationrules/reviews
+    uid: 467c80f4-1c40-11e9-8e7f-000c2955ae79
+  spec:
+    host: reviews
+    subsets:
+    - labels:
+        version: v1
+      name: v1
+    - labels:
+        version: v2
+      name: v2
+    - labels:
+        version: v3
+      name: v3
+    trafficPolicy:
+      tls:
+        mode: ISTIO_MUTUAL
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
